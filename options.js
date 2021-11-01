@@ -29,7 +29,7 @@ const syncVisits = () => {
           historyCount += 1
           historyResult.textContent = `history count: ${historyCount}`
         }).catch((err) => {
-          console.log("Add history failed:", err)
+          console.log("Add history failed:", err, historyItem)
         })
         if (historyItem.url) {
           await chrome.history.getVisits({ url: historyItem.url }, (visitItems) => {
@@ -40,7 +40,7 @@ const syncVisits = () => {
                   visitCount += 1
                   visitResult.textContent = `visit count: ${visitCount}`
                 }).catch((err) => {
-                  console.log("Add visit failed:", err)
+                  console.log("Add visit failed:", err, visitItem)
                 })
               }
             })()

@@ -12,9 +12,21 @@ const httpPut = (url, data) => {
 }
 
 chrome.history.onVisited.addListener((historyItem) => {
-  httpPut(`http://127.0.0.1:9200/chrome/history/${historyItem.id}`, historyItem).then((data) => {
-    console.log('Add history:', data)
+  httpPut(`http://127.0.0.1:9200/chrome/history/${historyItem.id}`, historyItem).then(() => {
+    if (historyItem.url) {
+      chrome.history.getVisits({ url: historyItem.url }, (visitItems) => {
+        (async () => {
+          for (const visitItem of visitItems) {
+            await httpPut(`http://127.0.0.1:9200/chrome/visit/${visitItem.visitId}`, visitItem).catch((err) => {
+              console.log("Add visit failed:", err, visitItem)
+            })
+          }
+        })()
+      })
+      return
+    }
+    console.log("historyItem.url not found:", historyItem)
   }).catch((err) => {
-    console.log('Add history failed:', err)
+    console.log('Add history failed:', err, historyItem)
   })
 })
